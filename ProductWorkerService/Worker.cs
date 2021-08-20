@@ -16,11 +16,13 @@ namespace ProductWorkerService
     {
         private readonly ILogger<Worker> _logger;
         private readonly IConfiguration _configuration;
+        private readonly ProductFactory _productFactory;
 
-        public Worker(ILogger<Worker> logger, IConfiguration configuration)
+        public Worker(ILogger<Worker> logger, IConfiguration configuration, ProductFactory productFactory)
         {
             _logger = logger;
             _configuration = configuration;
+            _productFactory = productFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -32,30 +34,12 @@ namespace ProductWorkerService
                 using var channel = GrpcChannel.ForAddress(_configuration.GetValue<string>("WorkerService:ServerUrl"));
                 var client = new ProductProtoService.ProductProtoServiceClient(channel);
 
-                await AddProductAsync(client);
+                _logger.LogInformation("AddProductAsync Started...");
+                var addProductResponse = await client.AddProductAsync(await _productFactory.Generate());
+                _logger.LogInformation("AddProductAsync Response: " + addProductResponse.ToString());
 
-                var interval = _configuration.GetValue<int>("WorkerService:TaskInterval");
-                await Task.Delay(interval, stoppingToken);
+                await Task.Delay(_configuration.GetValue<int>("WorkerService:TaskInterval"), stoppingToken);
             }
-        }
-
-        private async Task AddProductAsync(ProductProtoService.ProductProtoServiceClient client)
-        {
-            Console.WriteLine("AddProductAsync Started..."); ;
-
-            var addProductResponse = await client.AddProductAsync(new AddProductRequest
-            {
-                Product = new ProductModel
-                {
-                    Name = _configuration.GetValue<string>("WorkerService:ProductName") + DateTimeOffset.Now,
-                    Description = "WorkerService Description",
-                    Price = 10,
-                    CreatedTime = Timestamp.FromDateTime(DateTime.UtcNow),
-                    Status = ProductStatus.Instock
-                }
-            });
-
-            Console.WriteLine("AddProductAsync response: " + addProductResponse.ToString());
         }
     }
 }
