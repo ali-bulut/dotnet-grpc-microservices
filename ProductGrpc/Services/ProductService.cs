@@ -101,5 +101,18 @@ namespace ProductGrpc.Services
 
             return new DeleteProductResponse { Success = deletedCount > 0 };
         }
+
+        public override async Task<InsertBulkProductResponse> InsertBulkProduct(IAsyncStreamReader<ProductModel> requestStream, ServerCallContext context)
+        {
+            while (await requestStream.MoveNext())
+            {
+                var product = _mapper.Map<Models.Product>(requestStream.Current);
+                _productContext.Products.Add(product);
+            }
+
+            var insertCount = await _productContext.SaveChangesAsync();
+
+            return new InsertBulkProductResponse { Success = insertCount > 0, InsertCount = insertCount };
+        }
     }
 }
