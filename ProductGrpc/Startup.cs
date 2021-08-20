@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProductGrpc.Data;
 
 namespace ProductGrpc
 {
@@ -17,6 +19,10 @@ namespace ProductGrpc
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            services.AddDbContext<ProductContext>(options =>
+            {
+                options.UseInMemoryDatabase("Products");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
