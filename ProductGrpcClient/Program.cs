@@ -17,8 +17,28 @@ namespace ProductGrpcClient
             await GetProductAsync(client);
             await GetAllProductsAsync(client);
             await AddProductAsync(client);
+            await UpdateProductAsync(client);
+            await DeleteProductAsync(client);
 
             Console.ReadKey();
+        }
+
+        private static async Task GetProductAsync(ProductProtoService.ProductProtoServiceClient client)
+        {
+            Console.WriteLine("GetProductAsync Started...");
+            var response = await client.GetProductAsync(new GetProductRequest { ProductId = 1 });
+            Console.WriteLine("GetProductAsync Response: " + response.ToString());
+        }
+
+        private static async Task GetAllProductsAsync(ProductProtoService.ProductProtoServiceClient client)
+        {
+            Console.WriteLine("GetAllProductsAsync Started...");
+
+            using var clientData = client.GetAllProducts(new GetAllProductsRequest());
+            await foreach (var responseData in clientData.ResponseStream.ReadAllAsync())
+            {
+                Console.WriteLine("GetAllProductsAsync Response: " + responseData.ToString());
+            }
         }
 
         private static async Task AddProductAsync(ProductProtoService.ProductProtoServiceClient client)
@@ -40,22 +60,32 @@ namespace ProductGrpcClient
             Console.WriteLine("AddProductAsync response: " + addProductResponse.ToString());
         }
 
-        private static async Task GetAllProductsAsync(ProductProtoService.ProductProtoServiceClient client)
+        private static async Task UpdateProductAsync(ProductProtoService.ProductProtoServiceClient client)
         {
-            Console.WriteLine("GetAllProductsAsync Started...");
+            Console.WriteLine("UpdateProductAsync Started...");
 
-            using var clientData = client.GetAllProducts(new GetAllProductsRequest());
-            await foreach (var responseData in clientData.ResponseStream.ReadAllAsync())
+            var updateProductResponse = await client.UpdateProductAsync(new UpdateProductRequest
             {
-                Console.WriteLine("GetAllProductsAsync Response: " + responseData.ToString());
-            }
+                Product = new ProductModel
+                {
+                    Id = 4,
+                    Name = "Test Product (Edited)",
+                    Description = "Test Description (Edited)",
+                    Price = 20,
+                    CreatedTime = Timestamp.FromDateTime(DateTime.UtcNow),
+                    Status = ProductStatus.Instock
+                }
+            });
+
+            Console.WriteLine("UpdateProductAsync Response: " + updateProductResponse.ToString());
         }
 
-        private static async Task GetProductAsync(ProductProtoService.ProductProtoServiceClient client)
+        private static async Task DeleteProductAsync(ProductProtoService.ProductProtoServiceClient client)
         {
-            Console.WriteLine("GetProductAsync Started...");
-            var response = await client.GetProductAsync(new GetProductRequest { ProductId = 1 });
-            Console.WriteLine("GetProductAsync Response: " + response.ToString());
+            Console.WriteLine("DeleteProductAsync Started...");
+
+            var deleteProductResponse = await client.DeleteProductAsync(new DeleteProductRequest { ProductId = 4 });
+            Console.WriteLine("DeleteProductAsync Response: " + deleteProductResponse.Success.ToString());
         }
     }
 }
