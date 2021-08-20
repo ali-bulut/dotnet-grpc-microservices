@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
@@ -61,6 +62,44 @@ namespace ProductGrpc.Services
             var productModel = _mapper.Map<ProductModel>(product);
 
             return productModel;
+        }
+
+        public override async Task<ProductModel> UpdateProduct(UpdateProductRequest request, ServerCallContext context)
+        {
+            var product = _mapper.Map<Models.Product>(request.Product);
+            
+            if(!await _productContext.Products.AnyAsync(x => x.Id == product.Id))
+            {
+                // throw rpc exception
+            }
+
+            _productContext.Entry(product).State = EntityState.Modified;
+
+            try
+            {
+                await _productContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            var productModel = _mapper.Map<ProductModel>(product);
+            return productModel;
+        }
+
+        public override async Task<DeleteProductResponse> DeleteProduct(DeleteProductRequest request, ServerCallContext context)
+        {
+            var product = await _productContext.Products.FindAsync(request.ProductId);
+            if (product == null)
+            {
+                // throw rpc exception
+            }
+
+            _productContext.Products.Remove(product);
+            var deletedCount = await _productContext.SaveChangesAsync();
+
+            return new DeleteProductResponse { Success = deletedCount > 0 };
         }
     }
 }
