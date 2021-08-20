@@ -5,8 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProductGrpc.Data;
+using ProductGrpc.Mapper;
+using ProductGrpc.Services;
 
 namespace ProductGrpc
 {
@@ -16,7 +20,16 @@ namespace ProductGrpc
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpc();
+            services.AddGrpc(opt => {
+                opt.EnableDetailedErrors = true;
+            });
+
+            services.AddDbContext<ProductContext>(options =>
+            {
+                options.UseInMemoryDatabase("Products");
+            });
+
+            services.AddAutoMapper(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,7 +44,7 @@ namespace ProductGrpc
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<ProductService>();
 
                 endpoints.MapGet("/", async context =>
                 {
