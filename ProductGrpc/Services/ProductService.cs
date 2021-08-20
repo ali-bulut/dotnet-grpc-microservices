@@ -65,5 +65,34 @@ namespace ProductGrpc.Services
                 await responseStream.WriteAsync(productModel);
             }
         }
+
+        public override async Task<ProductModel> AddProduct(AddProductRequest request, ServerCallContext context)
+        {
+            var product = new Models.Product
+            {
+                Id = request.Product.Id,
+                Name = request.Product.Name,
+                Description = request.Product.Description,
+                Price = request.Product.Price,
+                Status = Models.ProductStatus.INSTOCK,
+                CreatedTime = request.Product.CreatedTime.ToDateTime()
+            };
+
+            await _productContext.Products.AddAsync(product);
+
+            await _productContext.SaveChangesAsync();
+
+            var productModel = new ProductModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Status = Protos.ProductStatus.Instock,
+                CreatedTime = Timestamp.FromDateTime(product.CreatedTime)
+            };
+
+            return productModel;
+        }
     }
 }
