@@ -74,5 +74,37 @@ namespace ShoppingCartGrpc.Services
 
             return new RemoveItemFromShoppingCartResponse { Success = removedCount > 0 };
         }
+
+        public override async Task<AddItemIntoShoppingCartResponse> AddItemIntoShoppingCart(IAsyncStreamReader<AddItemIntoShoppingCartRequest> requestStream, ServerCallContext context)
+        {
+            while(await requestStream.MoveNext())
+            {
+                var shoppingCart = await _shoppingCartContext.ShoppingCarts.FirstOrDefaultAsync(x => x.Username == requestStream.Current.Username);
+                if (shoppingCart == null)
+                {
+                    throw new RpcException(new Status(StatusCode.NotFound, $"ShoppingCart with Username={requestStream.Current.Username} is not found!"));
+                }
+
+                var addedCartItem = _mapper.Map<ShoppingCartItem>(requestStream.Current.NewCartItem);
+
+                var cartItem = shoppingCart.Items.FirstOrDefault(x => x.ProductId == addedCartItem.ProductId);
+                if(cartItem != null)
+                {
+                    cartItem.Quantity++;
+                }
+                else
+                {
+                    // grpc call to discount service -- check discount and calculate the item price.
+                    float discount = 0;
+                    addedCartItem.Price -= discount;
+
+                    shoppingCart.Items.Add(addedCartItem);
+                }
+            }
+
+            var insertCount = await _shoppingCartContext.SaveChangesAsync();
+
+            return new AddItemIntoShoppingCartResponse { Success = insertCount > 0, InsertCount = insertCount };
+        }
     }
 }
