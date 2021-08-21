@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ShoppingCartGrpc.Data;
 
 namespace ShoppingCartGrpc
 {
@@ -13,7 +15,21 @@ namespace ShoppingCartGrpc
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            SeedDatabase(host);
+
+            host.Run();
+        }
+
+        private static void SeedDatabase(IHost host)
+        {
+            using var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
+
+            var shoppingCartContext = services.GetRequiredService<ShoppingCartContext>();
+
+            ShoppingCartContextSeed.SeedAsync(shoppingCartContext);
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
