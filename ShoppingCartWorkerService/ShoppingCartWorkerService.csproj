@@ -13,11 +13,13 @@
     </PackageReference>
     <PackageReference Include="Google.Protobuf" Version="3.17.3" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.39.0" />
+    <PackageReference Include="IdentityModel" Version="5.1.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Grpc.Tools" />
     <None Remove="Google.Protobuf" />
     <None Remove="Grpc.Net.ClientFactory" />
+    <None Remove="IdentityModel" />
   </ItemGroup>
   <ItemGroup>
     <Protobuf Include="..\ProductGrpc\Protos\product.proto" GrpcServices="Client">

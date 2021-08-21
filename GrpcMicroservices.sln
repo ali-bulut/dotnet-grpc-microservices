@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscountGrpc", "DiscountGrp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCartWorkerService", "ShoppingCartWorkerService\ShoppingCartWorkerService.csproj", "{F0F21F23-B02A-4CE0-9A58-646007A07F77}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Authentication", "Authentication", "{39B6F3E8-F846-4792-9587-F9FC536E7236}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer", "IdentityServer\IdentityServer.csproj", "{0A9780FB-6DBC-4BA1-AA10-5722C412D51E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,10 @@ Global
 		{F0F21F23-B02A-4CE0-9A58-646007A07F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0F21F23-B02A-4CE0-9A58-646007A07F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0F21F23-B02A-4CE0-9A58-646007A07F77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A9780FB-6DBC-4BA1-AA10-5722C412D51E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A9780FB-6DBC-4BA1-AA10-5722C412D51E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A9780FB-6DBC-4BA1-AA10-5722C412D51E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A9780FB-6DBC-4BA1-AA10-5722C412D51E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,5 +73,6 @@ Global
 		{25BAD962-4ED1-4CA9-8BB0-EA3C60B83F22} = {01942CDA-8A6A-4925-8F3C-84979BCCE59B}
 		{1E04D058-FEBC-4F0D-A4FC-FF259E8910FA} = {2F491879-02CD-4D7C-BC21-BD5F50387417}
 		{F0F21F23-B02A-4CE0-9A58-646007A07F77} = {01942CDA-8A6A-4925-8F3C-84979BCCE59B}
+		{0A9780FB-6DBC-4BA1-AA10-5722C412D51E} = {39B6F3E8-F846-4792-9587-F9FC536E7236}
 	EndGlobalSection
 EndGlobal
