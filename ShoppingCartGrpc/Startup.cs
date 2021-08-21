@@ -50,6 +50,7 @@ namespace ShoppingCartGrpc
                 .AddJwtBearer("Bearer", options =>
                 {
                     options.Authority = "http://localhost:5010";
+                    options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false
