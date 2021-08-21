@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "ShoppingCartGrpc": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:25645;https://localhost:10887",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
