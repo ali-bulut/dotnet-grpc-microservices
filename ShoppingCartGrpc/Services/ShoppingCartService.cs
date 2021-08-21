@@ -59,6 +59,7 @@ namespace ShoppingCartGrpc.Services
             return _mapper.Map<ShoppingCartModel>(shoppingCart);
         }
 
+        [AllowAnonymous]
         public override async Task<RemoveItemFromShoppingCartResponse> RemoveItemFromShoppingCart(RemoveItemFromShoppingCartRequest request, ServerCallContext context)
         {
             var shoppingCart = await _shoppingCartContext.ShoppingCarts.FirstOrDefaultAsync(x => x.Username == request.Username);
@@ -79,6 +80,7 @@ namespace ShoppingCartGrpc.Services
             return new RemoveItemFromShoppingCartResponse { Success = removedCount > 0 };
         }
 
+        [AllowAnonymous]
         public override async Task<AddItemIntoShoppingCartResponse> AddItemIntoShoppingCart(IAsyncStreamReader<AddItemIntoShoppingCartRequest> requestStream, ServerCallContext context)
         {
             while(await requestStream.MoveNext())
