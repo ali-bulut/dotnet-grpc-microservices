@@ -2,7 +2,7 @@
   "profiles": {
     "ShoppingCartGrpc": {
       "commandName": "Project",
-      "applicationUrl": "http://localhost:25645;https://localhost:10887",
+      "applicationUrl": "http://localhost:5004;https://localhost:5005",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
