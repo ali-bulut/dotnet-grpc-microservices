@@ -39,7 +39,7 @@ namespace ShoppingCartWorkerService
                 var token = await GetTokenFromIS4();
 
                 // 1- create shopping cart if not exist
-                var scModel = await GetOrCreateShoppingCartAsync(scClient);
+                var scModel = await GetOrCreateShoppingCartAsync(scClient, token);
 
                 // 2- open shopping cart client stream
                 using var scClientStream = scClient.AddItemIntoShoppingCart();
@@ -111,7 +111,7 @@ namespace ShoppingCartWorkerService
             return tokenResponse.AccessToken;
         }
 
-        private async Task<ShoppingCartModel> GetOrCreateShoppingCartAsync(ShoppingCartProtoService.ShoppingCartProtoServiceClient scClient)
+        private async Task<ShoppingCartModel> GetOrCreateShoppingCartAsync(ShoppingCartProtoService.ShoppingCartProtoServiceClient scClient, string token)
         {
             ShoppingCartModel shoppingCartModel;
             var username = _configuration.GetValue<string>("WorkerService:Username");
@@ -119,7 +119,11 @@ namespace ShoppingCartWorkerService
             try
             {
                 _logger.LogInformation("GetShoppingCartAsync Started...");
-                shoppingCartModel = await scClient.GetShoppingCartAsync(new GetShoppingCartRequest { Username = username });
+
+                var headers = new Metadata();
+                headers.Add("Authorization", $"Bearer {token}");
+
+                shoppingCartModel = await scClient.GetShoppingCartAsync(new GetShoppingCartRequest { Username = username }, headers);
                 _logger.LogInformation("GetShoppingCartAsync Response: " + shoppingCartModel.ToString());
             }
             catch (RpcException ex)
